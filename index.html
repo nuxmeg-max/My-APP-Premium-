@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KYY STORE — Premium Apps</title>
+  <meta name="description" content="Akses tools premium tanpa ribet. Harga terjangkau, kualitas ga murahan." />
+
+  <!-- ── Stylesheets ── -->
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/nav.css" />
+  <link rel="stylesheet" href="css/hero.css" />
+  <link rel="stylesheet" href="css/products.css" />
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════
+       CURSOR
+       ════════════════════════════════════════════ -->
+  <div class="cursor"      id="cursor"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
+
+
+  <!-- ════════════════════════════════════════════
+       NAVBAR
+       ════════════════════════════════════════════ -->
+  <nav>
+    <a href="#" class="nav-logo">KYY<span>STORE</span></a>
+    <div class="nav-tag">PREMIUM APPS</div>
+    <div class="nav-status">
+      <div class="status-dot"></div>
+      OPEN FOR ORDER
+    </div>
+  </nav>
+
+
+  <!-- ════════════════════════════════════════════
+       HERO
+       ════════════════════════════════════════════ -->
+  <div class="hero">
+    <div class="hero-bg-text">PREMIUM</div>
+    <div class="hero-eyebrow">Est. 2025 — Digital Store</div>
+    <h1 class="hero-title">
+      PREMIUM<br>
+      <em>APPS</em><br>
+      STORE.
+    </h1>
+    <p class="hero-sub" id="hero-sub"></p>
+    <div class="hero-scroll">Scroll</div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       MARQUEE TICKER
+       Edit teks di sini jika perlu
+       ════════════════════════════════════════════ -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span class="accent">CHATGPT+</span><span>—</span>
+      <span>PREMIUM ACCESS</span><span>—</span>
+      <span class="accent">HARGA TERJANGKAU</span><span>—</span>
+      <span>GARANSI</span><span>—</span>
+      <span class="accent">TRUSTED SELLER</span><span>—</span>
+      <span>ORDER VIA WA</span><span>—</span>
+      <!-- Duplikat untuk seamless loop -->
+      <span class="accent">CHATGPT+</span><span>—</span>
+      <span>PREMIUM ACCESS</span><span>—</span>
+      <span class="accent">HARGA TERJANGKAU</span><span>—</span>
+      <span>GARANSI</span><span>—</span>
+      <span class="accent">TRUSTED SELLER</span><span>—</span>
+      <span>ORDER VIA WA</span><span>—</span>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       PRODUCTS
+       Konten diisi otomatis oleh js/order.js
+       berdasarkan data/products.js
+       ════════════════════════════════════════════ -->
+  <section id="products"></section>
+
+
+  <div class="divider"></div>
+
+
+  <!-- ════════════════════════════════════════════
+       FOOTER
+       ════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo" id="footer-logo"></div>
+        <div class="footer-desc" id="footer-desc"></div>
+      </div>
+      <div class="footer-contact">
+        <a href="#" id="footer-wa" target="_blank">
+          <div>
+            <div>HUBUNGI KAMI</div>
+            <span id="footer-wa-label">via WhatsApp</span>
+          </div>
+          <div class="arrow">↗</div>
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy" id="footer-copy"></div>
+      <div class="footer-tag">BUILT FOR THE GRIND ☕</div>
+    </div>
+  </footer>
+
+
+  <!-- ════════════════════════════════════════════
+       SCRIPTS
+       Urutan penting: data → logic → cursor
+       ════════════════════════════════════════════ -->
+  <script src="data/products.js"></script>
+  <script src="js/order.js"></script>
+  <script src="js/cursor.js"></script>
+
+  <!-- Inject data ke footer & hero dari products.js -->
+  <script>
+    if (typeof STORE_DATA !== 'undefined') {
+      // Hero tagline
+      document.getElementById('hero-sub').textContent = STORE_DATA.tagline;
+
+      // Footer logo
+      const sn = STORE_DATA.storeName;
+      const splitAt = sn.indexOf('STORE');
+      const part1 = splitAt > -1 ? sn.slice(0, splitAt) : sn;
+      const part2 = splitAt > -1 ? sn.slice(splitAt) : '';
+      document.getElementById('footer-logo').innerHTML =
+        part1 + '<span>' + part2 + '</span>';
+
+      // Footer desc
+      document.getElementById('footer-desc').textContent =
+        '// digital product store.\norder mudah, respon cepat,\nharga ga bikin kantong bolong.';
+
+      // Footer WA link
+      const wa = STORE_DATA.whatsapp;
+      document.getElementById('footer-wa').href = `https://wa.me/${wa}`;
+      document.getElementById('footer-wa-label').textContent = `via WhatsApp → ${wa}`;
+
+      // Footer copyright
+      const year = new Date().getFullYear();
+      document.getElementById('footer-copy').textContent =
+        `© ${year} ${STORE_DATA.storeName} — ALL RIGHTS RESERVED`;
+    }
+  </script>
+
+</body>
+</html>

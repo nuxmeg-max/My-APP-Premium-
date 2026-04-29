@@ -1,0 +1,139 @@
+/* ============================================================
+   hero.css — Hero Section & Marquee Ticker
+   ============================================================ */
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: clamp(120px, 22vw, 320px);
+  color: rgba(255, 255, 255, 0.025);
+  letter-spacing: -4px;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--grey-3);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 40px;
+  height: 1px;
+  background: var(--grey-3);
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(64px, 11vw, 160px);
+  line-height: 0.9;
+  letter-spacing: -1px;
+  margin-bottom: 32px;
+}
+.hero-title em {
+  font-style: normal;
+  color: var(--grey-3);
+}
+
+.hero-sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--grey-3);
+  max-width: 400px;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.hero-scroll {
+  position: absolute;
+  right: 48px;
+  bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--grey-3);
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+}
+.hero-scroll::after {
+  content: '';
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--grey-3), transparent);
+  animation: scrollLine 2s ease infinite;
+}
+
+@keyframes scrollLine {
+  0%   { transform: scaleY(0); transform-origin: top; }
+  50%  { transform: scaleY(1); transform-origin: top; }
+  51%  { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* ── Marquee ── */
+.marquee-wrap {
+  border-top: 1px solid var(--grey-2);
+  border-bottom: 1px solid var(--grey-2);
+  padding: 14px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  background: var(--grey-1);
+}
+
+.marquee-track {
+  display: inline-flex;
+  animation: marquee 20s linear infinite;
+}
+.marquee-track span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--grey-3);
+  padding: 0 40px;
+  text-transform: uppercase;
+}
+.marquee-track span.accent {
+  color: var(--white);
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .hero {
+    padding: 0 20px 60px;
+  }
+  .hero-scroll {
+    display: none;
+  }
+}

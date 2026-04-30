@@ -314,23 +314,25 @@ footer {
   .footer-bottom { flex-direction: column; gap: 12px; align-items: flex-start; }
 }
 
-.show-more-wrapper {
+/* SHOW MORE BUTTON */
+.show-more-wrap {
   text-align: center;
-  margin-top: 40px;
+  margin: 50px 0 10px;
 }
 
 .show-more-btn {
-  padding: 14px 30px;
-  border: none;
+  padding: 14px 34px;
   border-radius: 12px;
-  background: #6c5cff;
-  color: white;
-  font-weight: 600;
+  border: none;
+  background: #ffffff;
+  color: #000;
+  font-weight: 700;
+  letter-spacing: 1px;
   cursor: pointer;
   transition: 0.3s;
 }
 
 .show-more-btn:hover {
   transform: translateY(-3px);
-  opacity: 0.9;
+  opacity: 0.85;
 }

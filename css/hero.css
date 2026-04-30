@@ -4,7 +4,7 @@
 
 /* ── Hero wrapper ── */
 .hero {
-  min-height: 100vh;
+  min-height: unset;
   display: flex;
   flex-direction: column;
   position: relative;

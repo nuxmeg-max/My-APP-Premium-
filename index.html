@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="css/nav.css" />
   <link rel="stylesheet" href="css/hero.css" />
   <link rel="stylesheet" href="css/products.css" />
+  <link rel="stylesheet" href="css/search.css" />
 </head>
 <body>
 
@@ -38,21 +39,40 @@
        HERO
        ════════════════════════════════════════════ -->
   <div class="hero">
-    <div class="hero-bg-text">PREMIUM</div>
-    <div class="hero-eyebrow">Est. 2025 — Digital Store</div>
-    <h1 class="hero-title">
-      PREMIUM<br>
-      <em>APPS</em><br>
-      STORE.
-    </h1>
-    <p class="hero-sub" id="hero-sub"></p>
+
+    <!-- VIDEO BANNER
+         Taruh file video di folder: assets/videos/
+         Ganti "banner.mp4" dengan nama file videomu
+    -->
+    <div class="hero-video-wrap">
+      <video
+        class="hero-video"
+        src="assets/videos/banner.mp4"
+        autoplay
+        loop
+        muted
+        playsinline
+      ></video>
+      <div class="hero-video-overlay"></div>
+      <div class="hero-video-label">KYY STORE ✦ 2025</div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">Est. 2025 — Digital Store</div>
+      <h1 class="hero-title">
+        PREMIUM<br>
+        <em>APPS</em><br>
+        STORE.
+      </h1>
+      <p class="hero-sub" id="hero-sub"></p>
+    </div>
+
     <div class="hero-scroll">Scroll</div>
   </div>
 
 
   <!-- ════════════════════════════════════════════
        MARQUEE TICKER
-       Edit teks di sini jika perlu
        ════════════════════════════════════════════ -->
   <div class="marquee-wrap">
     <div class="marquee-track">
@@ -62,7 +82,6 @@
       <span>GARANSI</span><span>—</span>
       <span class="accent">TRUSTED SELLER</span><span>—</span>
       <span>ORDER VIA WA</span><span>—</span>
-      <!-- Duplikat untuk seamless loop -->
       <span class="accent">CHATGPT+</span><span>—</span>
       <span>PREMIUM ACCESS</span><span>—</span>
       <span class="accent">HARGA TERJANGKAU</span><span>—</span>
@@ -74,9 +93,27 @@
 
 
   <!-- ════════════════════════════════════════════
+       SEARCH BAR
+       ════════════════════════════════════════════ -->
+  <div class="search-wrap">
+    <div class="search-inner">
+      <span class="search-icon">⌕</span>
+      <input
+        type="text"
+        class="search-input"
+        id="search-input"
+        placeholder="Cari produk... (contoh: ChatGPT, Sharing)"
+        autocomplete="off"
+      />
+      <span class="search-clear" id="search-clear">✕</span>
+    </div>
+    <div class="search-result-count" id="search-count"></div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
        PRODUCTS
        Konten diisi otomatis oleh js/order.js
-       berdasarkan data/products.js
        ════════════════════════════════════════════ -->
   <section id="products"></section>
 
@@ -111,20 +148,17 @@
 
 
   <!-- ════════════════════════════════════════════
-       SCRIPTS
-       Urutan penting: data → logic → cursor
+       SCRIPTS — urutan penting: data → logic → cursor
        ════════════════════════════════════════════ -->
   <script src="data/products.js"></script>
   <script src="js/order.js"></script>
+  <script src="js/search.js"></script>
   <script src="js/cursor.js"></script>
 
-  <!-- Inject data ke footer & hero dari products.js -->
   <script>
     if (typeof STORE_DATA !== 'undefined') {
-      // Hero tagline
       document.getElementById('hero-sub').textContent = STORE_DATA.tagline;
 
-      // Footer logo
       const sn = STORE_DATA.storeName;
       const splitAt = sn.indexOf('STORE');
       const part1 = splitAt > -1 ? sn.slice(0, splitAt) : sn;
@@ -132,16 +166,13 @@
       document.getElementById('footer-logo').innerHTML =
         part1 + '<span>' + part2 + '</span>';
 
-      // Footer desc
       document.getElementById('footer-desc').textContent =
         '// digital product store.\norder mudah, respon cepat,\nharga ga bikin kantong bolong.';
 
-      // Footer WA link
       const wa = STORE_DATA.whatsapp;
       document.getElementById('footer-wa').href = `https://wa.me/${wa}`;
       document.getElementById('footer-wa-label').textContent = `via WhatsApp → ${wa}`;
 
-      // Footer copyright
       const year = new Date().getFullYear();
       document.getElementById('footer-copy').textContent =
         `© ${year} ${STORE_DATA.storeName} — ALL RIGHTS RESERVED`;

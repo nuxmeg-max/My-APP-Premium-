@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/hero.css" />
   <link rel="stylesheet" href="css/products.css" />
   <link rel="stylesheet" href="css/search.css" />
+  <link rel="stylesheet" href="css/refund.css" />
 </head>
 <body>
 
@@ -41,13 +42,12 @@
   <div class="hero">
 
     <!-- VIDEO BANNER
-         Taruh file video di folder: assets/videos/
-         Ganti "banner.mp4" dengan nama file videomu
+         Taruh file video di: assets/videos/banner.mp4
     -->
     <div class="hero-video-wrap">
       <video
         class="hero-video"
-        src="assets/videos/BannerVID.mp4"
+        src="assets/videos/banner.mp4"
         autoplay
         loop
         muted
@@ -93,6 +93,105 @@
 
 
   <!-- ════════════════════════════════════════════
+       REFUND CALCULATOR
+       ════════════════════════════════════════════ -->
+  <section id="refund">
+    <div class="section-label">「 Rumus Refund 」</div>
+
+    <div class="refund-wrap">
+
+      <!-- Formula display -->
+      <div class="refund-formula fade-up">
+        <div class="refund-formula-text">
+          Harga Beli × Sisa Durasi ÷ Total Durasi × Service Fee
+        </div>
+        <div class="refund-formula-eq">= TOTAL REFUND</div>
+      </div>
+
+      <!-- Calculator -->
+      <div class="refund-calc fade-up">
+        <div class="calc-row">
+          <label class="calc-label">Harga Beli (IDR)</label>
+          <input class="calc-input" id="rc-harga" type="number" placeholder="8000" />
+        </div>
+        <div class="calc-row">
+          <label class="calc-label">Sisa Durasi (hari)</label>
+          <input class="calc-input" id="rc-sisa" type="number" placeholder="24" />
+        </div>
+        <div class="calc-row">
+          <label class="calc-label">Total Durasi (hari)</label>
+          <input class="calc-input" id="rc-total" type="number" placeholder="30" />
+        </div>
+        <div class="calc-row">
+          <label class="calc-label">Service Fee</label>
+          <div class="calc-fee-grid">
+            <label class="fee-option">
+              <input type="radio" name="fee" value="0.8" checked />
+              <span>0,8 — Pakai &lt; 1 minggu</span>
+            </label>
+            <label class="fee-option">
+              <input type="radio" name="fee" value="0.7" />
+              <span>0,7 — Belum claim, &gt; 1 minggu</span>
+            </label>
+            <label class="fee-option">
+              <input type="radio" name="fee" value="0.6" />
+              <span>0,6 — Sudah claim 1–2x</span>
+            </label>
+            <label class="fee-option">
+              <input type="radio" name="fee" value="0.5" />
+              <span>0,5 — Sudah claim 3x</span>
+            </label>
+            <label class="fee-option">
+              <input type="radio" name="fee" value="0.4" />
+              <span>0,4 — Sudah claim &gt;3x</span>
+            </label>
+          </div>
+        </div>
+
+        <button class="calc-btn" onclick="hitungRefund()">HITUNG →</button>
+
+        <div class="calc-result" id="rc-result">
+          <div class="result-label">TOTAL REFUND</div>
+          <div class="result-value" id="rc-value">—</div>
+          <div class="result-formula" id="rc-formula"></div>
+        </div>
+      </div>
+
+      <!-- Ketentuan -->
+      <div class="refund-terms fade-up">
+        <div class="terms-title">‼️ Ketentuan Service Fee</div>
+        <div class="terms-list">
+          <div class="terms-item">
+            <span class="terms-fee">0,8</span>
+            <span>Pemakaian kurang dari seminggu</span>
+          </div>
+          <div class="terms-item">
+            <span class="terms-fee">0,7</span>
+            <span>Belum pernah claim garansi tapi sudah lebih dari seminggu</span>
+          </div>
+          <div class="terms-item">
+            <span class="terms-fee">0,6</span>
+            <span>Sudah pernah claim garansi 1x–2x</span>
+          </div>
+          <div class="terms-item">
+            <span class="terms-fee">0,5</span>
+            <span>Sudah pernah claim garansi 3x</span>
+          </div>
+          <div class="terms-item">
+            <span class="terms-fee">0,4</span>
+            <span>Sudah pernah claim garansi lebih dari 3x</span>
+          </div>
+        </div>
+        <div class="terms-example">
+          Contoh: 8.000 × 24 ÷ 30 × 0,8 = <strong>5.120</strong>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
        SEARCH BAR
        ════════════════════════════════════════════ -->
   <div class="search-wrap">
@@ -113,7 +212,6 @@
 
   <!-- ════════════════════════════════════════════
        PRODUCTS
-       Konten diisi otomatis oleh js/order.js
        ════════════════════════════════════════════ -->
   <section id="products"></section>
 
@@ -148,13 +246,14 @@
 
 
   <!-- ════════════════════════════════════════════
-       SCRIPTS — urutan penting: data → logic → cursor
+       SCRIPTS
        ════════════════════════════════════════════ -->
   <script src="data/products.js"></script>
   <script src="js/order.js"></script>
   <script src="js/search.js"></script>
   <script src="js/cursor.js"></script>
 
+  <!-- Inject store data -->
   <script>
     if (typeof STORE_DATA !== 'undefined') {
       document.getElementById('hero-sub').textContent = STORE_DATA.tagline;
@@ -176,6 +275,30 @@
       const year = new Date().getFullYear();
       document.getElementById('footer-copy').textContent =
         `© ${year} ${STORE_DATA.storeName} — ALL RIGHTS RESERVED`;
+    }
+  </script>
+
+  <!-- Refund Calculator -->
+  <script>
+    function hitungRefund() {
+      const harga = parseFloat(document.getElementById('rc-harga').value);
+      const sisa  = parseFloat(document.getElementById('rc-sisa').value);
+      const total = parseFloat(document.getElementById('rc-total').value);
+      const fee   = parseFloat(document.querySelector('input[name="fee"]:checked').value);
+
+      const valEl     = document.getElementById('rc-value');
+      const formulaEl = document.getElementById('rc-formula');
+
+      if (!harga || !sisa || !total || sisa > total) {
+        valEl.textContent     = 'CEK INPUT';
+        formulaEl.textContent = 'Pastikan semua field terisi dan sisa ≤ total durasi';
+        return;
+      }
+
+      const result = harga * sisa / total * fee;
+      valEl.textContent     = 'IDR ' + Math.round(result).toLocaleString('id-ID');
+      formulaEl.textContent =
+        `${harga.toLocaleString('id-ID')} × ${sisa} ÷ ${total} × ${fee} = ${Math.round(result).toLocaleString('id-ID')}`;
     }
   </script>
 

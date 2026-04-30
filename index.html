@@ -6,7 +6,6 @@
   <title>KYY STORE — Premium Apps</title>
   <meta name="description" content="Akses tools premium tanpa ribet. Harga terjangkau, kualitas ga murahan." />
 
-  <!-- ── Stylesheets ── -->
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/nav.css" />
   <link rel="stylesheet" href="css/hero.css" />
@@ -16,16 +15,11 @@
 </head>
 <body>
 
-  <!-- ════════════════════════════════════════════
-       CURSOR
-       ════════════════════════════════════════════ -->
+  <!-- CURSOR -->
   <div class="cursor"      id="cursor"></div>
   <div class="cursor-ring" id="cursor-ring"></div>
 
-
-  <!-- ════════════════════════════════════════════
-       NAVBAR
-       ════════════════════════════════════════════ -->
+  <!-- NAVBAR -->
   <nav>
     <a href="#" class="nav-logo">KYY<span>STORE</span></a>
     <div class="nav-tag">PREMIUM APPS</div>
@@ -35,15 +29,8 @@
     </div>
   </nav>
 
-
-  <!-- ════════════════════════════════════════════
-       HERO
-       ════════════════════════════════════════════ -->
+  <!-- HERO -->
   <div class="hero">
-
-    <!-- VIDEO BANNER
-         Taruh file video di: assets/videos/banner.mp4
-    -->
     <div class="hero-video-wrap">
       <video
         class="hero-video"
@@ -56,7 +43,6 @@
       <div class="hero-video-overlay"></div>
       <div class="hero-video-label">KYY STORE ✦ 2025</div>
     </div>
-
     <div class="hero-content">
       <div class="hero-eyebrow">Est. 2025 — Digital Store</div>
       <h1 class="hero-title">
@@ -66,14 +52,10 @@
       </h1>
       <p class="hero-sub" id="hero-sub"></p>
     </div>
-
     <div class="hero-scroll">Scroll</div>
   </div>
 
-
-  <!-- ════════════════════════════════════════════
-       MARQUEE TICKER
-       ════════════════════════════════════════════ -->
+  <!-- MARQUEE -->
   <div class="marquee-wrap">
     <div class="marquee-track">
       <span class="accent">CHATGPT+</span><span>—</span>
@@ -91,25 +73,69 @@
     </div>
   </div>
 
+  <!-- SEARCH BAR -->
+  <div class="search-wrap">
+    <div class="search-inner">
+      <span class="search-icon">⌕</span>
+      <input
+        type="text"
+        class="search-input"
+        id="search-input"
+        placeholder="Cari produk... (contoh: ChatGPT, Sharing)"
+        autocomplete="off"
+      />
+      <span class="search-clear" id="search-clear">✕</span>
+    </div>
+    <div class="search-result-count" id="search-count"></div>
+  </div>
 
-  <!-- ════════════════════════════════════════════
-       REFUND CALCULATOR
-       ════════════════════════════════════════════ -->
-  <section id="refund">
-    <div class="section-label">「 Rumus Refund 」</div>
+  <!-- PRODUCTS -->
+  <section id="products"></section>
 
-    <div class="refund-wrap">
+  <div class="divider"></div>
 
-      <!-- Formula display -->
-      <div class="refund-formula fade-up">
-        <div class="refund-formula-text">
-          Harga Beli × Sisa Durasi ÷ Total Durasi × Service Fee
-        </div>
-        <div class="refund-formula-eq">= TOTAL REFUND</div>
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo" id="footer-logo"></div>
+        <div class="footer-desc" id="footer-desc"></div>
+      </div>
+      <div class="footer-contact">
+        <a href="#" id="footer-wa" target="_blank">
+          <div>
+            <div>HUBUNGI KAMI</div>
+            <span id="footer-wa-label">via WhatsApp</span>
+          </div>
+          <div class="arrow">↗</div>
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy" id="footer-copy"></div>
+      <div class="footer-tag">BUILT FOR THE GRIND ☕</div>
+    </div>
+  </footer>
+
+  <!-- REFUND FLOATING BUTTON -->
+  <button class="refund-trigger" onclick="toggleRefund()">
+    <span>⟳</span> KALKULATOR REFUND
+  </button>
+
+  <!-- REFUND MODAL -->
+  <div class="modal-overlay" id="refund-overlay" onclick="closeRefundOutside(event)">
+    <div class="modal-box">
+
+      <div class="modal-header">
+        <div class="modal-title">「 KALKULATOR REFUND 」</div>
+        <button class="modal-close" onclick="toggleRefund()">✕</button>
       </div>
 
-      <!-- Calculator -->
-      <div class="refund-calc fade-up">
+      <div class="modal-formula">
+        Harga Beli × Sisa Durasi ÷ Total Durasi × Service Fee <strong>= TOTAL REFUND</strong>
+      </div>
+
+      <div class="modal-body">
         <div class="calc-row">
           <label class="calc-label">Harga Beli (IDR)</label>
           <input class="calc-input" id="rc-harga" type="number" placeholder="8000" />
@@ -150,110 +176,23 @@
 
         <button class="calc-btn" onclick="hitungRefund()">HITUNG →</button>
 
-        <div class="calc-result" id="rc-result">
+        <div class="calc-result">
           <div class="result-label">TOTAL REFUND</div>
           <div class="result-value" id="rc-value">—</div>
           <div class="result-formula" id="rc-formula"></div>
         </div>
       </div>
 
-      <!-- Ketentuan -->
-      <div class="refund-terms fade-up">
-        <div class="terms-title">‼️ Ketentuan Service Fee</div>
-        <div class="terms-list">
-          <div class="terms-item">
-            <span class="terms-fee">0,8</span>
-            <span>Pemakaian kurang dari seminggu</span>
-          </div>
-          <div class="terms-item">
-            <span class="terms-fee">0,7</span>
-            <span>Belum pernah claim garansi tapi sudah lebih dari seminggu</span>
-          </div>
-          <div class="terms-item">
-            <span class="terms-fee">0,6</span>
-            <span>Sudah pernah claim garansi 1x–2x</span>
-          </div>
-          <div class="terms-item">
-            <span class="terms-fee">0,5</span>
-            <span>Sudah pernah claim garansi 3x</span>
-          </div>
-          <div class="terms-item">
-            <span class="terms-fee">0,4</span>
-            <span>Sudah pernah claim garansi lebih dari 3x</span>
-          </div>
-        </div>
-        <div class="terms-example">
-          Contoh: 8.000 × 24 ÷ 30 × 0,8 = <strong>5.120</strong>
-        </div>
-      </div>
-
     </div>
-  </section>
-
-
-  <!-- ════════════════════════════════════════════
-       SEARCH BAR
-       ════════════════════════════════════════════ -->
-  <div class="search-wrap">
-    <div class="search-inner">
-      <span class="search-icon">⌕</span>
-      <input
-        type="text"
-        class="search-input"
-        id="search-input"
-        placeholder="Cari produk... (contoh: ChatGPT, Sharing)"
-        autocomplete="off"
-      />
-      <span class="search-clear" id="search-clear">✕</span>
-    </div>
-    <div class="search-result-count" id="search-count"></div>
   </div>
 
-
-  <!-- ════════════════════════════════════════════
-       PRODUCTS
-       ════════════════════════════════════════════ -->
-  <section id="products"></section>
-
-
-  <div class="divider"></div>
-
-
-  <!-- ════════════════════════════════════════════
-       FOOTER
-       ════════════════════════════════════════════ -->
-  <footer>
-    <div class="footer-top">
-      <div>
-        <div class="footer-logo" id="footer-logo"></div>
-        <div class="footer-desc" id="footer-desc"></div>
-      </div>
-      <div class="footer-contact">
-        <a href="#" id="footer-wa" target="_blank">
-          <div>
-            <div>HUBUNGI KAMI</div>
-            <span id="footer-wa-label">via WhatsApp</span>
-          </div>
-          <div class="arrow">↗</div>
-        </a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <div class="footer-copy" id="footer-copy"></div>
-      <div class="footer-tag">BUILT FOR THE GRIND ☕</div>
-    </div>
-  </footer>
-
-
-  <!-- ════════════════════════════════════════════
-       SCRIPTS
-       ════════════════════════════════════════════ -->
+  <!-- SCRIPTS -->
   <script src="data/products.js"></script>
   <script src="js/order.js"></script>
   <script src="js/search.js"></script>
   <script src="js/cursor.js"></script>
 
-  <!-- Inject store data -->
+  <!-- Store Data Inject -->
   <script>
     if (typeof STORE_DATA !== 'undefined') {
       document.getElementById('hero-sub').textContent = STORE_DATA.tagline;
@@ -278,8 +217,21 @@
     }
   </script>
 
-  <!-- Refund Calculator -->
+  <!-- Refund Modal Logic -->
   <script>
+    function toggleRefund() {
+      const overlay = document.getElementById('refund-overlay');
+      overlay.classList.toggle('active');
+      document.body.style.overflow =
+        overlay.classList.contains('active') ? 'hidden' : '';
+    }
+
+    function closeRefundOutside(e) {
+      if (e.target === document.getElementById('refund-overlay')) {
+        toggleRefund();
+      }
+    }
+
     function hitungRefund() {
       const harga = parseFloat(document.getElementById('rc-harga').value);
       const sisa  = parseFloat(document.getElementById('rc-sisa').value);

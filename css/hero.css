@@ -78,7 +78,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 40px 48px 72px;
+  padding: 24px 48px 24px;
   position: relative;
 }
 
@@ -191,7 +191,7 @@
     max-height: 260px;
   }
   .hero-content {
-    padding: 28px 20px 60px;
+    padding: 20px 20px 20px;
   }
   .hero-scroll {
     display: none;

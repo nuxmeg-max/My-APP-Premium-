@@ -313,3 +313,24 @@ footer {
   .footer-top { flex-direction: column; gap: 32px; }
   .footer-bottom { flex-direction: column; gap: 12px; align-items: flex-start; }
 }
+
+.show-more-wrapper {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.show-more-btn {
+  padding: 14px 30px;
+  border: none;
+  border-radius: 12px;
+  background: #6c5cff;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.show-more-btn:hover {
+  transform: translateY(-3px);
+  opacity: 0.9;
+}

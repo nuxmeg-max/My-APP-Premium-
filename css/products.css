@@ -29,7 +29,7 @@
   text-transform: uppercase;
 }
 
-/* ── Cards Grid — 2 kolom fixed ── */
+/* ── Cards Grid — selalu 2 kolom ── */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -42,14 +42,15 @@
 /* ── Card ── */
 .card {
   background: var(--black);
-  padding: 32px 28px;
+  padding: 28px 22px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   position: relative;
   overflow: hidden;
   transition: background var(--transition-base);
   cursor: none;
+  min-height: 280px;
 }
 
 /* Wipe-up hover effect */
@@ -85,7 +86,7 @@
 
 .card-icon {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9px;
   color: var(--grey-3);
   letter-spacing: 2px;
   transition: color var(--transition-base);
@@ -93,38 +94,38 @@
 
 .badge-pill {
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: 7px;
   letter-spacing: 2px;
   text-transform: uppercase;
   background: var(--grey-2);
   color: var(--grey-3);
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 100px;
   transition: background var(--transition-base), color var(--transition-base);
 }
 
 .card-name {
   font-family: var(--font-display);
-  font-size: clamp(20px, 2.5vw, 26px);
-  letter-spacing: 1px;
+  font-size: clamp(16px, 3.5vw, 24px);
+  letter-spacing: 0.5px;
   line-height: 1.1;
 }
 
 .card-tag {
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: 7px;
   letter-spacing: 2px;
   color: var(--grey-3);
   text-transform: uppercase;
   border: 1px solid var(--grey-2);
-  padding: 4px 10px;
+  padding: 3px 8px;
   width: fit-content;
   transition: color var(--transition-base), border-color var(--transition-base);
 }
 
 .card-desc {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9px;
   color: var(--grey-3);
   line-height: 1.9;
   transition: color var(--transition-base);
@@ -137,17 +138,19 @@
   justify-content: space-between;
   margin-top: auto;
   padding-top: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .card-price {
   font-family: var(--font-display);
-  font-size: clamp(28px, 3vw, 34px);
+  font-size: clamp(22px, 4vw, 30px);
   letter-spacing: 1px;
   transition: color var(--transition-base);
 }
 .card-price small {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9px;
   opacity: 0.5;
   display: block;
   margin-bottom: 2px;
@@ -155,12 +158,12 @@
 
 .card-btn {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 2px;
   text-transform: uppercase;
   background: var(--white);
   color: var(--black);
-  padding: 10px 16px;
+  padding: 9px 14px;
   cursor: none;
   transition: background var(--transition-base), color var(--transition-base);
   white-space: nowrap;
@@ -261,9 +264,51 @@ footer {
   letter-spacing: 2px;
 }
 
-/* ── Responsive ── */
-@media (max-width: 600px) {
-  .cards-grid { grid-template-columns: 1fr; }
+/* ── Responsive mobile — tetap 2 kolom ── */
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .card {
+    padding: 16px 12px;
+    gap: 10px;
+    min-height: 240px;
+  }
+  .card-name {
+    font-size: 14px;
+  }
+  .card-price {
+    font-size: 20px;
+  }
+  .card-btn {
+    font-size: 7px;
+    padding: 7px 10px;
+    letter-spacing: 1px;
+  }
+  .card-desc {
+    font-size: 8px;
+    line-height: 1.7;
+  }
+  .badge-pill {
+    font-size: 6px;
+    padding: 3px 6px;
+  }
+  .card-tag {
+    font-size: 6px;
+    padding: 3px 6px;
+  }
+  .card-icon {
+    font-size: 8px;
+  }
+  section {
+    padding: 40px 16px;
+  }
+  .search-wrap {
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 768px) {
   footer { padding: 40px 20px 30px; }
   .footer-top { flex-direction: column; gap: 32px; }
   .footer-bottom { flex-direction: column; gap: 12px; align-items: flex-start; }

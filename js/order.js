@@ -1,102 +1,75 @@
-// ============================================================
-//  order.js — Render Produk, Order WA, Scroll Animation
-// ============================================================
+// ====== CONFIG ======
+let visibleProducts = 6; // jumlah produk tampil awal
+let showAll = false;
 
-document.addEventListener('DOMContentLoaded', () => {
-  renderStore();
-  initScrollAnimation();
-});
+// ambil container
+const container = document.getElementById("products-container");
+const showMoreWrapper = document.getElementById("show-more-wrapper");
 
-function renderStore() {
-  const section = document.getElementById('products');
-  if (!section || typeof STORE_DATA === 'undefined') return;
+// ====== CREATE PRODUCT CARD ======
+function createProductCard(product) {
+  const card = document.createElement("div");
+  card.className = "product-card";
 
-  const { categories } = STORE_DATA;
-  let html = `<div class="section-label">「 Katalog Produk 」</div>`;
-
-  categories.forEach((cat, catIndex) => {
-    html += `
-      <div class="category-block">
-        <div class="category-header fade-up">
-          <div class="category-name">${cat.category}</div>
-          <div class="category-badge">${cat.badge}</div>
-        </div>
-        <div class="cards-grid">
-          ${cat.products.map((p, i) => renderCard(p, catIndex * 10 + i)).join('')}
-        </div>
-      </div>
-    `;
-  });
-
-  html += `
-    <div class="coming-soon fade-up">
-      <span>✦ &nbsp; Produk lainnya segera hadir &nbsp; ✦</span>
-    </div>
+  card.innerHTML = `
+    <h3>${product.name}</h3>
+    <p class="price">${product.price}</p>
+    <ul>
+      ${product.desc.map(d => `<li>${d}</li>`).join("")}
+    </ul>
+    <button onclick="orderProduct('${product.waName}')">
+      Order via WhatsApp
+    </button>
   `;
 
-  section.innerHTML = html;
+  return card;
 }
 
-function renderCard(product, index) {
-  const descHTML = product.desc
-    .map(d => `<div class="desc-item">${d}</div>`)
-    .join('');
-  const num = String(index + 1).padStart(2, '0');
+// ====== RENDER PRODUCTS ======
+function renderProducts() {
+  container.innerHTML = "";
 
-  return `
-    <div class="card fade-up" onclick="orderWA('${escapeAttr(product.waName)}')">
-      <div class="card-top">
-        <div class="card-icon">// ${num}</div>
-        <div class="badge-pill">${product.badge}</div>
-      </div>
-      <div class="card-name">${product.name}</div>
-      <div class="card-tag">${product.tag}</div>
-      <div class="card-desc">${descHTML}</div>
-      <div class="card-bottom">
-        <div class="card-price">
-          <small>IDR</small>
-          ${product.price}
-        </div>
-        <button class="card-btn">ORDER →</button>
-      </div>
-    </div>
-  `;
-}
+  const productsToShow = showAll
+    ? products
+    : products.slice(0, visibleProducts);
 
-function orderWA(productName) {
-  if (typeof STORE_DATA === 'undefined') return;
-  const phone = STORE_DATA.whatsapp;
-  const msg   = encodeURIComponent(`Buy ${productName}`);
-  window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-}
-
-function initScrollAnimation() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.08 });
-
-  const mutationObs = new MutationObserver(() => {
-    document.querySelectorAll('.fade-up:not([data-observed])').forEach((el, i) => {
-      el.setAttribute('data-observed', '1');
-      el.style.transitionDelay = (i * 0.04) + 's';
-      observer.observe(el);
-    });
+  productsToShow.forEach(product => {
+    const card = createProductCard(product);
+    container.appendChild(card);
   });
 
-  mutationObs.observe(document.body, { childList: true, subtree: true });
-
-  document.querySelectorAll('.fade-up').forEach((el, i) => {
-    el.setAttribute('data-observed', '1');
-    el.style.transitionDelay = (i * 0.04) + 's';
-    observer.observe(el);
-  });
+  renderShowMoreButton();
 }
 
-function escapeAttr(str) {
-  return str.replace(/'/g, "\\'");
+// ====== SHOW MORE BUTTON ======
+function renderShowMoreButton() {
+  showMoreWrapper.innerHTML = "";
+
+  // kalau produk sedikit, tombol tidak muncul
+  if (products.length <= visibleProducts) return;
+
+  const btn = document.createElement("button");
+  btn.className = "show-more-btn";
+  btn.innerText = showAll ? "Show Less Products" : "Show More Products";
+
+  btn.onclick = () => {
+    showAll = !showAll;
+    renderProducts();
+
+    // scroll ke area produk biar smooth UX
+    container.scrollIntoView({ behavior: "smooth" });
+  };
+
+  showMoreWrapper.appendChild(btn);
 }
+
+// ====== WHATSAPP ORDER ======
+function orderProduct(productName) {
+  const phone = whatsapp; // dari products.js
+  const message = `Halo kak, saya mau order:\n${productName}`;
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+}
+
+// ====== INIT ======
+renderProducts();

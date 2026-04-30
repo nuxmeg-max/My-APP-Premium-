@@ -1,67 +1,138 @@
-// ===== CONFIG =====
-let visibleProducts = 6;
-let showAll = false;
+/* =====================================================
+   KYYSTORE MAIN ORDER SCRIPT + SHOW MORE FEATURE
+===================================================== */
 
-const container = document.getElementById("products-container");
-const showMoreWrapper = document.getElementById("show-more-wrapper");
+// ===============================
+// SHOW MORE CONFIG
+// ===============================
+let SHOW_ALL = false;
+const INITIAL_PER_CATEGORY = 4;
 
-// ===== CREATE CARD =====
-function createProductCard(product) {
-  const card = document.createElement("div");
-  card.className = "product-card";
 
-  card.innerHTML = `
-    <h3>${product.name}</h3>
-    <span class="price">${product.price}</span>
-    <ul>
-      ${product.desc.map(d => `<li>${d}</li>`).join("")}
-    </ul>
-    <button onclick="orderProduct('${product.waName}')">
-      Order via WhatsApp
-    </button>
+// ===============================
+// RENDER 1 PRODUCT CARD
+// ===============================
+function renderCard(p, index) {
+  return `
+    <div class="card fade-up" style="transition-delay:${index * 0.05}s">
+      
+      <div class="card-title">${p.name}</div>
+      <div class="card-price">${p.price}</div>
+
+      <ul class="card-features">
+        ${p.features.map(f => `<li>${f}</li>`).join("")}
+      </ul>
+
+      <button class="card-btn" onclick="orderWA('${p.wa}')">
+        ORDER VIA WHATSAPP
+      </button>
+
+    </div>
   `;
-
-  return card;
 }
 
-// ===== RENDER PRODUCTS =====
-function renderProducts() {
-  container.innerHTML = "";
 
-  const list = showAll ? products : products.slice(0, visibleProducts);
+// ===============================
+// RENDER STORE (KATEGORI + PRODUK)
+// ===============================
+function renderStore() {
+  const section = document.getElementById('products');
+  if (!section || typeof STORE_DATA === 'undefined') return;
 
-  list.forEach(product => {
-    container.appendChild(createProductCard(product));
+  const { categories } = STORE_DATA;
+
+  let html = `<div class="section-label">「 Katalog Produk 」</div>`;
+
+  categories.forEach((cat, catIndex) => {
+
+    // 🔥 LOGIC SHOW MORE
+    const productsToShow = SHOW_ALL
+      ? cat.products
+      : cat.products.slice(0, INITIAL_PER_CATEGORY);
+
+    html += `
+      <div class="category-block">
+        
+        <div class="category-header fade-up">
+          <div class="category-name">${cat.category}</div>
+          <div class="category-badge">${cat.badge}</div>
+        </div>
+
+        <div class="cards-grid">
+          ${productsToShow.map((p, i) =>
+            renderCard(p, catIndex * 100 + i)
+          ).join('')}
+        </div>
+
+      </div>
+    `;
   });
 
-  renderShowMoreButton();
+  // ===============================
+  // BUTTON SHOW MORE GLOBAL
+  // ===============================
+  html += `
+    <div class="show-more-wrap fade-up">
+      <button class="show-more-btn" onclick="toggleShowProducts()">
+        ${SHOW_ALL ? 'Show Less Products' : 'Show More Products'}
+      </button>
+    </div>
+  `;
+
+  // coming soon text tetap
+  html += `
+    <div class="coming-soon fade-up">
+      <span>✦ &nbsp; Produk lainnya segera hadir &nbsp; ✦</span>
+    </div>
+  `;
+
+  section.innerHTML = html;
 }
 
-// ===== SHOW MORE BUTTON =====
-function renderShowMoreButton() {
-  showMoreWrapper.innerHTML = "";
 
-  if (products.length <= visibleProducts) return;
+// ===============================
+// TOGGLE SHOW MORE
+// ===============================
+function toggleShowProducts() {
+  SHOW_ALL = !SHOW_ALL;
+  renderStore();
 
-  const btn = document.createElement("button");
-  btn.className = "show-more-btn";
-  btn.textContent = showAll ? "Show Less Products" : "Show More Products";
-
-  btn.onclick = () => {
-    showAll = !showAll;
-    renderProducts();
-    document.getElementById("products").scrollIntoView({behavior:"smooth"});
-  };
-
-  showMoreWrapper.appendChild(btn);
+  const top = document.getElementById('products').offsetTop - 80;
+  window.scrollTo({ top: top, behavior: "smooth" });
 }
 
-// ===== ORDER WHATSAPP =====
-function orderProduct(productName) {
-  const phone = whatsapp;
-  const text = `Halo kak, saya mau order:\n${productName}`;
-  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`);
+
+// ===============================
+// ORDER VIA WHATSAPP
+// ===============================
+function orderWA(productName) {
+  const phone = STORE_DATA.whatsapp;
+  const message = `Halo kak, saya mau order:\n${productName}`;
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
 }
 
-// ===== INIT =====
-renderProducts();
+
+// ===============================
+// SCROLL ANIMATION
+// ===============================
+function initScrollAnimation() {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("show");
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll(".fade-up").forEach(el => observer.observe(el));
+}
+
+
+// ===============================
+// INIT WEBSITE
+// ===============================
+document.addEventListener('DOMContentLoaded', () => {
+  renderStore();
+  initScrollAnimation();
+});

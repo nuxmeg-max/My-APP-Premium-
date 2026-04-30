@@ -59,7 +59,7 @@
 
 /* Placeholder teks saat video belum ada */
 .hero-video-wrap::before {
-  content: 'VIDEO BANNER';
+  content: 'Kyy APP Premium';
   position: absolute;
   inset: 0;
   display: flex;
@@ -78,7 +78,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 24px 48px 24px;
+  padding: 0 48px 24px;
   position: relative;
 }
 
@@ -191,7 +191,7 @@
     max-height: 260px;
   }
   .hero-content {
-    padding: 20px 20px 20px;
+    padding: 0 20px 20px;
   }
   .hero-scroll {
     display: none;

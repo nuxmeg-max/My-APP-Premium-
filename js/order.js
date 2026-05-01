@@ -2,14 +2,13 @@
 //  order.js — Render Produk, Order WA, Scroll Animation
 // ============================================================
 
-const INITIAL_SHOW = 4; // ← jumlah produk yang tampil di awal
+const INITIAL_SHOW = 4;
 
 document.addEventListener('DOMContentLoaded', () => {
   renderStore();
   initScrollAnimation();
 });
 
-// ── Render seluruh store ──────────────────────────────────────
 function renderStore() {
   const section = document.getElementById('products');
   if (!section || typeof STORE_DATA === 'undefined') return;
@@ -20,19 +19,21 @@ function renderStore() {
   let cardIndex = 0;
 
   categories.forEach((cat) => {
+    const firstIndexInCat = cardIndex;
+
     const catCards = cat.products.map((p) => {
-      const hidden = cardIndex >= INITIAL_SHOW;
-      const card = renderCard(p, cardIndex, hidden);
+      const card = renderCard(p, cardIndex);
       cardIndex++;
       return card;
     }).join('');
 
-    // Hitung apakah semua produk di kategori ini hidden
-    const firstIndexInCat = cardIndex - cat.products.length;
     const allHidden = firstIndexInCat >= INITIAL_SHOW;
 
     html += `
-      <div class="category-block${allHidden ? ' hidden-product' : ''}" data-cat-start="${firstIndexInCat}" data-cat-end="${cardIndex - 1}">
+      <div class="category-block"
+           data-cat-start="${firstIndexInCat}"
+           data-cat-end="${cardIndex - 1}"
+           style="${allHidden ? 'display:none' : ''}">
         <div class="category-header fade-up">
           <div class="category-name">${cat.category}</div>
           <div class="category-badge">${cat.badge}</div>
@@ -44,10 +45,8 @@ function renderStore() {
     `;
   });
 
-  // Total semua produk
   const totalProducts = cardIndex;
 
-  // Show more button
   if (totalProducts > INITIAL_SHOW) {
     html += `
       <div class="showmore-wrap" id="showmore-wrap">
@@ -69,16 +68,15 @@ function renderStore() {
   section.innerHTML = html;
 }
 
-// ── Render 1 Card ─────────────────────────────────────────────
-function renderCard(product, index, hidden) {
+function renderCard(product, index) {
   const descHTML = product.desc
     .map(d => `<div class="desc-item">${d}</div>`)
     .join('');
   const num = String(index + 1).padStart(2, '0');
-  const hiddenClass = hidden ? ' hidden-product' : '';
+  const hidden = index >= INITIAL_SHOW ? 'style="display:none"' : '';
 
   return `
-    <div class="card fade-up${hiddenClass}" data-index="${index}" onclick="orderWA('${escapeAttr(product.waName)}')">
+    <div class="card fade-up" data-index="${index}" ${hidden} onclick="orderWA('${escapeAttr(product.waName)}')">
       <div class="card-top">
         <div class="card-icon">// ${num}</div>
         <div class="badge-pill">${product.badge}</div>
@@ -97,7 +95,6 @@ function renderCard(product, index, hidden) {
   `;
 }
 
-// ── Toggle Show More / Show Less ──────────────────────────────
 let isExpanded = false;
 
 function toggleShowMore() {
@@ -110,15 +107,14 @@ function toggleShowMore() {
   const comingSoon = document.getElementById('coming-soon-el');
 
   if (isExpanded) {
-    // Tampilkan semua card dan category block
-    document.querySelectorAll('.card.hidden-product').forEach((card, i) => {
-      setTimeout(() => {
-        card.classList.remove('hidden-product');
-        card.classList.add('visible');
-      }, i * 40);
+    document.querySelectorAll('.card').forEach((card, i) => {
+      const idx = parseInt(card.getAttribute('data-index'));
+      if (idx >= INITIAL_SHOW) {
+        setTimeout(() => { card.style.display = ''; }, (i - INITIAL_SHOW) * 40);
+      }
     });
-    document.querySelectorAll('.category-block.hidden-product').forEach((block) => {
-      block.classList.remove('hidden-product');
+    document.querySelectorAll('.category-block').forEach(block => {
+      block.style.display = '';
     });
 
     label.textContent = 'SHOW LESS';
@@ -128,20 +124,13 @@ function toggleShowMore() {
     if (comingSoon) comingSoon.style.display = 'block';
 
   } else {
-    // Sembunyikan card dan category block yang di atas INITIAL_SHOW
-    document.querySelectorAll('.card').forEach((card) => {
+    document.querySelectorAll('.card').forEach(card => {
       const idx = parseInt(card.getAttribute('data-index'));
-      if (idx >= INITIAL_SHOW) {
-        card.classList.add('hidden-product');
-        card.classList.remove('visible');
-      }
+      if (idx >= INITIAL_SHOW) card.style.display = 'none';
     });
-
-    document.querySelectorAll('.category-block').forEach((block) => {
+    document.querySelectorAll('.category-block').forEach(block => {
       const start = parseInt(block.getAttribute('data-cat-start'));
-      if (start >= INITIAL_SHOW) {
-        block.classList.add('hidden-product');
-      }
+      if (start >= INITIAL_SHOW) block.style.display = 'none';
     });
 
     const totalCards = document.querySelectorAll('.card').length;
@@ -155,7 +144,6 @@ function toggleShowMore() {
   }
 }
 
-// ── WhatsApp Order ────────────────────────────────────────────
 function orderWA(productName) {
   if (typeof STORE_DATA === 'undefined') return;
   const phone = STORE_DATA.whatsapp;
@@ -163,7 +151,6 @@ function orderWA(productName) {
   window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
 }
 
-// ── Scroll Fade-Up Animation ──────────────────────────────────
 function initScrollAnimation() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -191,7 +178,6 @@ function initScrollAnimation() {
   });
 }
 
-// ── Helper ────────────────────────────────────────────────────
 function escapeAttr(str) {
   return str.replace(/'/g, "\\'");
 }

@@ -201,11 +201,6 @@
   text-transform: uppercase;
 }
 
-/* ── Hidden Product ── */
-.hidden-product {
-  display: none !important;
-}
-
 /* ── Show More Button ── */
 .showmore-wrap {
   display: flex;

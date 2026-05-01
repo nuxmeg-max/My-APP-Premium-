@@ -28,33 +28,41 @@ function initSearch() {
 }
 
 function filterProducts(query, countEl) {
-  const categoryBlocks = document.querySelectorAll('.category-block');
-  let totalVisible = 0;
+  const allCards      = document.querySelectorAll('.card');
+  const showmoreWrap  = document.querySelector('.showmore-wrap');
+  let totalVisible    = 0;
 
-  categoryBlocks.forEach(block => {
-    const cards = block.querySelectorAll('.card');
-    let visibleInBlock = 0;
-
-    cards.forEach(card => {
-      const catName  = block.querySelector('.category-name')?.textContent.toLowerCase() || '';
-      const cardText = [
-        card.querySelector('.card-name')?.textContent  || '',
-        card.querySelector('.card-tag')?.textContent   || '',
-        card.querySelector('.badge-pill')?.textContent || '',
-        card.querySelector('.card-desc')?.textContent  || '',
-        catName,
-      ].join(' ').toLowerCase();
-
-      const match = query === '' || cardText.includes(query);
-      card.classList.toggle('hidden', !match);
-      if (match) { visibleInBlock++; totalVisible++; }
+  if (query === '') {
+    // Reset ke state awal
+    allCards.forEach((card, i) => {
+      if (i >= INITIAL_SHOW && !isExpanded) {
+        card.classList.add('hidden-product');
+      } else {
+        card.classList.remove('hidden-product');
+      }
     });
+    if (showmoreWrap) showmoreWrap.style.display = '';
+    if (countEl) countEl.textContent = '';
+    return;
+  }
 
-    block.classList.toggle('hidden', visibleInBlock === 0 && query !== '');
+  // Saat search aktif, tampilkan semua dan filter
+  if (showmoreWrap) showmoreWrap.style.display = 'none';
+
+  allCards.forEach(card => {
+    const cardText = [
+      card.querySelector('.card-name')?.textContent  || '',
+      card.querySelector('.card-tag')?.textContent   || '',
+      card.querySelector('.badge-pill')?.textContent || '',
+      card.querySelector('.card-desc')?.textContent  || '',
+    ].join(' ').toLowerCase();
+
+    const match = cardText.includes(query);
+    card.classList.toggle('hidden-product', !match);
+    if (match) totalVisible++;
   });
 
   if (!countEl) return;
-  if (query === '')          countEl.textContent = '';
-  else if (totalVisible === 0) countEl.textContent = '✕ Tidak ada produk yang cocok';
-  else                       countEl.textContent = `✦ ${totalVisible} produk ditemukan`;
+  if (totalVisible === 0) countEl.textContent = '✕ Tidak ada produk yang cocok';
+  else countEl.textContent = `✦ ${totalVisible} produk ditemukan`;
 }

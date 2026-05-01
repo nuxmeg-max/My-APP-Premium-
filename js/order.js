@@ -75,9 +75,10 @@ function renderCard(product, index, catName) {
     .map(d => `<div class="desc-item">${d}</div>`)
     .join('');
   const num    = String(index + 1).padStart(2, '0');
-  const hidden = index >= INITIAL_SHOW ? 'style="display:none"' : '';
+  const hidden = index >= INITIAL_SHOW
+    ? 'style="display:none" data-hidden="true"'
+    : '';
 
-  // Encode product data untuk bottom sheet
   const productData = encodeURIComponent(JSON.stringify({
     name:    product.name,
     tag:     product.tag,
@@ -110,7 +111,6 @@ function renderCard(product, index, catName) {
 
 // ── Bottom Sheet ──────────────────────────────────────────────
 function initBottomSheet() {
-  // Inject HTML bottom sheet ke body
   const sheet = document.createElement('div');
   sheet.innerHTML = `
     <div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()"></div>
@@ -121,11 +121,11 @@ function initBottomSheet() {
         <div class="sheet-header-badge" id="sheet-badge"></div>
       </div>
       <div class="sheet-body">
-        <div class="sheet-cat"     id="sheet-cat"></div>
-        <div class="sheet-name"    id="sheet-name"></div>
-        <div class="sheet-tag"     id="sheet-tag"></div>
+        <div class="sheet-cat"  id="sheet-cat"></div>
+        <div class="sheet-name" id="sheet-name"></div>
+        <div class="sheet-tag"  id="sheet-tag"></div>
         <div class="sheet-divider"></div>
-        <div class="sheet-desc"    id="sheet-desc"></div>
+        <div class="sheet-desc" id="sheet-desc"></div>
         <div class="sheet-divider"></div>
         <div class="sheet-price-wrap">
           <div class="sheet-price">
@@ -152,7 +152,9 @@ function openSheet(encodedData) {
   document.getElementById('sheet-price').textContent = p.price;
 
   const descEl = document.getElementById('sheet-desc');
-  descEl.innerHTML = p.desc.map(d => `<div class="sheet-desc-item">${d}</div>`).join('');
+  descEl.innerHTML = p.desc
+    .map(d => `<div class="sheet-desc-item">${d}</div>`)
+    .join('');
 
   document.getElementById('sheet-order-btn').onclick = () => orderWA(p.waName);
 
@@ -183,7 +185,11 @@ function toggleShowMore() {
     document.querySelectorAll('.card').forEach((card) => {
       const idx = parseInt(card.getAttribute('data-index'));
       if (idx >= INITIAL_SHOW) {
-        setTimeout(() => { card.style.display = ''; fixOddCard(); }, (idx - INITIAL_SHOW) * 40);
+        setTimeout(() => {
+          card.style.display = '';
+          card.removeAttribute('data-hidden');
+          fixOddCard();
+        }, (idx - INITIAL_SHOW) * 40);
       }
     });
     document.querySelectorAll('.category-block').forEach(block => {
@@ -200,7 +206,10 @@ function toggleShowMore() {
   } else {
     document.querySelectorAll('.card').forEach(card => {
       const idx = parseInt(card.getAttribute('data-index'));
-      if (idx >= INITIAL_SHOW) card.style.display = 'none';
+      if (idx >= INITIAL_SHOW) {
+        card.style.display = 'none';
+        card.setAttribute('data-hidden', 'true');
+      }
     });
     document.querySelectorAll('.category-block').forEach(block => {
       const start = parseInt(block.getAttribute('data-cat-start'));
@@ -232,17 +241,15 @@ function fixOddCard() {
   document.querySelectorAll('.cards-grid').forEach(grid => {
     const allCards = [...grid.querySelectorAll('.card')];
 
-    // Reset semua dulu
     allCards.forEach(card => {
       card.style.gridColumn = '';
       card.style.maxWidth   = '';
     });
 
-    // Filter yang benar-benar visible
-    const visibleCards = allCards.filter(card => {
-      const s = window.getComputedStyle(card);
-      return s.display !== 'none';
-    });
+    const visibleCards = allCards.filter(card =>
+      card.style.display !== 'none' &&
+      card.getAttribute('data-hidden') !== 'true'
+    );
 
     if (visibleCards.length > 0 && visibleCards.length % 2 !== 0) {
       const last = visibleCards[visibleCards.length - 1];

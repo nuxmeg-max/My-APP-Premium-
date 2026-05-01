@@ -2,7 +2,7 @@
 //  order.js — Render Produk, Order WA, Scroll Animation
 // ============================================================
 
-const INITIAL_SHOW = 4; // ← ganti angka ini untuk ubah jumlah produk awal
+const INITIAL_SHOW = 4; // ← jumlah produk yang tampil di awal
 
 document.addEventListener('DOMContentLoaded', () => {
   renderStore();
@@ -15,46 +15,46 @@ function renderStore() {
   if (!section || typeof STORE_DATA === 'undefined') return;
 
   const { categories } = STORE_DATA;
-
-  // Flatten semua produk dengan info kategorinya
-  let allProducts = [];
-  categories.forEach((cat) => {
-    cat.products.forEach((p) => {
-      allProducts.push({ ...p, category: cat.category, catBadge: cat.badge });
-    });
-  });
-
   let html = `<div class="section-label">「 Katalog Produk 」</div>`;
 
-  // Render per kategori dengan header masing-masing
   let cardIndex = 0;
+
   categories.forEach((cat) => {
+    const catCards = cat.products.map((p) => {
+      const hidden = cardIndex >= INITIAL_SHOW;
+      const card = renderCard(p, cardIndex, hidden);
+      cardIndex++;
+      return card;
+    }).join('');
+
+    // Hitung apakah semua produk di kategori ini hidden
+    const firstIndexInCat = cardIndex - cat.products.length;
+    const allHidden = firstIndexInCat >= INITIAL_SHOW;
+
     html += `
-      <div class="category-block">
+      <div class="category-block${allHidden ? ' hidden-product' : ''}" data-cat-start="${firstIndexInCat}" data-cat-end="${cardIndex - 1}">
         <div class="category-header fade-up">
           <div class="category-name">${cat.category}</div>
           <div class="category-badge">${cat.badge}</div>
         </div>
         <div class="cards-grid">
-          ${cat.products.map((p) => {
-            const hidden = cardIndex >= INITIAL_SHOW;
-            const card = renderCard(p, cardIndex, hidden);
-            cardIndex++;
-            return card;
-          }).join('')}
+          ${catCards}
         </div>
       </div>
     `;
   });
-  
-  // Show more / show less button
-  if (allProducts.length > INITIAL_SHOW) {
+
+  // Total semua produk
+  const totalProducts = cardIndex;
+
+  // Show more button
+  if (totalProducts > INITIAL_SHOW) {
     html += `
-      <div class="showmore-wrap">
+      <div class="showmore-wrap" id="showmore-wrap">
         <button class="showmore-btn" id="showmore-btn" onclick="toggleShowMore()">
           <span id="showmore-label">SHOW MORE PRODUCTS</span>
           <span id="showmore-icon">↓</span>
-          <span class="showmore-count" id="showmore-count">+${allProducts.length - INITIAL_SHOW} produk lainnya</span>
+          <span class="showmore-count" id="showmore-count">+${totalProducts - INITIAL_SHOW} produk lainnya</span>
         </button>
       </div>
     `;
@@ -78,7 +78,7 @@ function renderCard(product, index, hidden) {
   const hiddenClass = hidden ? ' hidden-product' : '';
 
   return `
-    <div class="card fade-up${hiddenClass}" onclick="orderWA('${escapeAttr(product.waName)}')">
+    <div class="card fade-up${hiddenClass}" data-index="${index}" onclick="orderWA('${escapeAttr(product.waName)}')">
       <div class="card-top">
         <div class="card-icon">// ${num}</div>
         <div class="badge-pill">${product.badge}</div>
@@ -103,42 +103,54 @@ let isExpanded = false;
 function toggleShowMore() {
   isExpanded = !isExpanded;
 
-  const hiddenCards = document.querySelectorAll('.hidden-product');
-  const btn         = document.getElementById('showmore-btn');
-  const label       = document.getElementById('showmore-label');
-  const icon        = document.getElementById('showmore-icon');
-  const count       = document.getElementById('showmore-count');
-  const comingSoon  = document.getElementById('coming-soon-el');
+  const label      = document.getElementById('showmore-label');
+  const icon       = document.getElementById('showmore-icon');
+  const count      = document.getElementById('showmore-count');
+  const btn        = document.getElementById('showmore-btn');
+  const comingSoon = document.getElementById('coming-soon-el');
 
   if (isExpanded) {
-    // Tampilkan semua
-    hiddenCards.forEach((card, i) => {
+    // Tampilkan semua card dan category block
+    document.querySelectorAll('.card.hidden-product').forEach((card, i) => {
       setTimeout(() => {
         card.classList.remove('hidden-product');
         card.classList.add('visible');
-      }, i * 60);
+      }, i * 40);
     });
+    document.querySelectorAll('.category-block.hidden-product').forEach((block) => {
+      block.classList.remove('hidden-product');
+    });
+
     label.textContent = 'SHOW LESS';
     icon.textContent  = '↑';
     count.textContent = '';
     btn.classList.add('expanded');
     if (comingSoon) comingSoon.style.display = 'block';
+
   } else {
-    // Sembunyikan lagi
-    const allCards = document.querySelectorAll('.card');
-    allCards.forEach((card, i) => {
-      if (i >= INITIAL_SHOW) {
+    // Sembunyikan card dan category block yang di atas INITIAL_SHOW
+    document.querySelectorAll('.card').forEach((card) => {
+      const idx = parseInt(card.getAttribute('data-index'));
+      if (idx >= INITIAL_SHOW) {
         card.classList.add('hidden-product');
+        card.classList.remove('visible');
       }
     });
-    const total = document.querySelectorAll('.card').length;
+
+    document.querySelectorAll('.category-block').forEach((block) => {
+      const start = parseInt(block.getAttribute('data-cat-start'));
+      if (start >= INITIAL_SHOW) {
+        block.classList.add('hidden-product');
+      }
+    });
+
+    const totalCards = document.querySelectorAll('.card').length;
     label.textContent = 'SHOW MORE PRODUCTS';
     icon.textContent  = '↓';
-    count.textContent = `+${total - INITIAL_SHOW} produk lainnya`;
+    count.textContent = `+${totalCards - INITIAL_SHOW} produk lainnya`;
     btn.classList.remove('expanded');
     if (comingSoon) comingSoon.style.display = 'none';
 
-    // Scroll balik ke atas section products
     document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
   }
 }

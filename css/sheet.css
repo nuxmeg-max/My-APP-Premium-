@@ -1,0 +1,215 @@
+/* ============================================================
+   sheet.css — Bottom Sheet Detail Produk
+   ============================================================ */
+
+/* ── Overlay ── */
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 800;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.sheet-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Sheet ── */
+.sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  background: var(--black);
+  border-top: 1px solid var(--grey-2);
+  border-left: 1px solid var(--grey-2);
+  border-right: 1px solid var(--grey-2);
+  max-height: 88vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 0;
+}
+.sheet.active {
+  transform: translateY(0);
+}
+
+/* Scrollbar */
+.sheet::-webkit-scrollbar { width: 3px; }
+.sheet::-webkit-scrollbar-track { background: var(--grey-1); }
+.sheet::-webkit-scrollbar-thumb { background: var(--grey-2); }
+
+/* ── Handle ── */
+.sheet-handle {
+  width: 40px;
+  height: 3px;
+  background: var(--grey-2);
+  border-radius: 2px;
+  margin: 14px auto 0;
+}
+
+/* ── Header ── */
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--grey-2);
+  position: sticky;
+  top: 0;
+  background: var(--black);
+  z-index: 1;
+}
+
+.sheet-back {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--grey-3);
+  background: none;
+  border: 1px solid var(--grey-2);
+  padding: 8px 16px;
+  cursor: none;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  text-transform: uppercase;
+}
+.sheet-back:hover {
+  color: var(--white);
+  border-color: var(--grey-4);
+  background: var(--grey-1);
+}
+
+.sheet-header-badge {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: var(--grey-2);
+  color: var(--grey-3);
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+/* ── Body ── */
+.sheet-body {
+  padding: 28px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sheet-cat {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: var(--grey-3);
+  text-transform: uppercase;
+}
+
+.sheet-name {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 8vw, 56px);
+  letter-spacing: 1px;
+  line-height: 1;
+  color: var(--white);
+}
+
+.sheet-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--grey-3);
+  text-transform: uppercase;
+  border: 1px solid var(--grey-2);
+  padding: 5px 12px;
+  width: fit-content;
+}
+
+.sheet-divider {
+  height: 1px;
+  background: var(--grey-2);
+}
+
+/* ── Deskripsi ── */
+.sheet-desc {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sheet-desc-item {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--grey-3);
+  line-height: 1.7;
+  padding-left: 20px;
+  position: relative;
+}
+.sheet-desc-item::before {
+  content: '✦';
+  position: absolute;
+  left: 0;
+  color: var(--grey-3);
+  font-size: 8px;
+  top: 2px;
+}
+
+/* ── Harga ── */
+.sheet-price-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sheet-price {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 10vw, 64px);
+  letter-spacing: 2px;
+  color: var(--white);
+  line-height: 1;
+}
+.sheet-price small {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--grey-3);
+  display: block;
+  margin-bottom: 4px;
+  letter-spacing: 2px;
+}
+
+/* ── Order Button ── */
+.sheet-order-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: var(--white);
+  color: var(--black);
+  border: none;
+  padding: 18px;
+  cursor: none;
+  transition: background 0.2s;
+  width: 100%;
+  margin-top: 8px;
+}
+.sheet-order-btn:hover {
+  background: var(--grey-4);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .sheet {
+    max-height: 92vh;
+  }
+  .sheet-body {
+    padding: 20px 16px 32px;
+  }
+  .sheet-header {
+    padding: 14px 16px;
+  }
+}

@@ -34,76 +34,55 @@ function filterProducts(query, countEl) {
   let totalVisible   = 0;
 
   if (query === '') {
-    // ── Reset ke state awal ──
-    allCards.forEach((card) => {
+    // Reset ke state awal berdasarkan isExpanded
+    allCards.forEach(card => {
       const idx = parseInt(card.getAttribute('data-index'));
-      if (idx >= INITIAL_SHOW && !isExpanded) {
-        card.classList.add('hidden-product');
-      } else {
-        card.classList.remove('hidden-product');
-      }
+      card.style.display = (idx >= INITIAL_SHOW && !isExpanded) ? 'none' : '';
     });
-
-    allBlocks.forEach((block) => {
+    allBlocks.forEach(block => {
       const start = parseInt(block.getAttribute('data-cat-start'));
-      if (start >= INITIAL_SHOW && !isExpanded) {
-        block.classList.add('hidden-product');
-      } else {
-        block.classList.remove('hidden-product');
-      }
+      block.style.display = (start >= INITIAL_SHOW && !isExpanded) ? 'none' : '';
     });
-
     if (showmoreWrap) showmoreWrap.style.display = '';
     if (countEl) countEl.textContent = '';
     return;
   }
 
-  // ── Search aktif ──
-  // Sembunyikan showmore button
+  // Search aktif — sembunyikan showmore
   if (showmoreWrap) showmoreWrap.style.display = 'none';
 
-  // Tampilkan semua block dan card dulu sebelum filter
-  allBlocks.forEach(block => {
-    block.classList.remove('hidden-product');
-    block.style.display = '';
-  });
-  allCards.forEach(card => {
-    card.classList.remove('hidden-product');
-    card.style.display = '';
-  });
+  // Tampilkan semua dulu
+  allCards.forEach(card  => card.style.display  = '');
+  allBlocks.forEach(block => block.style.display = '');
 
-  // Filter per category block
-  allBlocks.forEach((block) => {
+  // Filter per block
+  allBlocks.forEach(block => {
     const cards = block.querySelectorAll('.card');
     let visibleInBlock = 0;
 
-    cards.forEach((card) => {
-      const cardText = [
-        card.querySelector('.card-name')?.textContent        || '',
-        card.querySelector('.card-tag')?.textContent         || '',
-        card.querySelector('.badge-pill')?.textContent       || '',
-        card.querySelector('.card-desc')?.textContent        || '',
-        block.querySelector('.category-name')?.textContent   || '',
+    cards.forEach(card => {
+      const text = [
+        card.querySelector('.card-name')?.textContent      || '',
+        card.querySelector('.card-tag')?.textContent       || '',
+        card.querySelector('.badge-pill')?.textContent     || '',
+        card.querySelector('.card-desc')?.textContent      || '',
+        block.querySelector('.category-name')?.textContent || '',
       ].join(' ').toLowerCase();
 
-      const match = cardText.includes(query);
-      if (!match) {
-        card.classList.add('hidden-product');
-        card.style.display = 'none';
-      } else {
+      if (text.includes(query)) {
+        card.style.display = '';
         visibleInBlock++;
         totalVisible++;
+      } else {
+        card.style.display = 'none';
       }
     });
 
-    // Sembunyikan seluruh block kalau tidak ada yang cocok
-    if (visibleInBlock === 0) {
-      block.classList.add('hidden-product');
-      block.style.display = 'none';
-    }
+    block.style.display = visibleInBlock === 0 ? 'none' : '';
   });
 
   if (!countEl) return;
-  if (totalVisible === 0) countEl.textContent = '✕ Tidak ada produk yang cocok';
-  else countEl.textContent = `✦ ${totalVisible} produk ditemukan`;
+  countEl.textContent = totalVisible === 0
+    ? '✕ Tidak ada produk yang cocok'
+    : `✦ ${totalVisible} produk ditemukan`;
 }

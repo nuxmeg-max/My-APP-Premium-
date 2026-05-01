@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="css/search.css" />
   <link rel="stylesheet" href="css/refund.css" />
   <link rel="stylesheet" href="css/sheet.css" />
+  <link rel="stylesheet" href="css/faq.css" />
 </head>
 <body>
 
@@ -90,11 +91,14 @@
     <div class="search-result-count" id="search-count"></div>
   </div>
 
-<!-- PRODUCTS -->
-<section id="products">
-  <div id="products-container" class="products-grid"></div>
-  <div id="show-more-wrapper" class="show-more-wrapper"></div>
-</section>
+  <!-- PRODUCTS -->
+  <section id="products"></section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="section-label">「 FAQ 」</div>
+    <div class="faq-wrap" id="faq-wrap"></div>
+  </section>
 
   <div class="divider"></div>
 
@@ -129,16 +133,13 @@
   <!-- REFUND MODAL -->
   <div class="modal-overlay" id="refund-overlay" onclick="closeRefundOutside(event)">
     <div class="modal-box">
-
       <div class="modal-header">
         <div class="modal-title">「 KALKULATOR REFUND 」</div>
         <button class="modal-close" onclick="toggleRefund()">✕</button>
       </div>
-
       <div class="modal-formula">
         Harga Beli × Sisa Durasi ÷ Total Durasi × Service Fee <strong>= TOTAL REFUND</strong>
       </div>
-
       <div class="modal-body">
         <div class="calc-row">
           <label class="calc-label">Harga Beli (IDR)</label>
@@ -177,16 +178,13 @@
             </label>
           </div>
         </div>
-
         <button class="calc-btn" onclick="hitungRefund()">HITUNG →</button>
-
         <div class="calc-result">
           <div class="result-label">TOTAL REFUND</div>
           <div class="result-value" id="rc-value">—</div>
           <div class="result-formula" id="rc-formula"></div>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -221,7 +219,7 @@
     }
   </script>
 
-  <!-- Refund Modal Logic -->
+  <!-- Refund Modal -->
   <script>
     function toggleRefund() {
       const overlay = document.getElementById('refund-overlay');
@@ -229,33 +227,103 @@
       document.body.style.overflow =
         overlay.classList.contains('active') ? 'hidden' : '';
     }
-
     function closeRefundOutside(e) {
-      if (e.target === document.getElementById('refund-overlay')) {
-        toggleRefund();
-      }
+      if (e.target === document.getElementById('refund-overlay')) toggleRefund();
     }
-
     function hitungRefund() {
       const harga = parseFloat(document.getElementById('rc-harga').value);
       const sisa  = parseFloat(document.getElementById('rc-sisa').value);
       const total = parseFloat(document.getElementById('rc-total').value);
       const fee   = parseFloat(document.querySelector('input[name="fee"]:checked').value);
-
       const valEl     = document.getElementById('rc-value');
       const formulaEl = document.getElementById('rc-formula');
-
       if (!harga || !sisa || !total || sisa > total) {
         valEl.textContent     = 'CEK INPUT';
         formulaEl.textContent = 'Pastikan semua field terisi dan sisa ≤ total durasi';
         return;
       }
-
       const result = harga * sisa / total * fee;
       valEl.textContent     = 'IDR ' + Math.round(result).toLocaleString('id-ID');
       formulaEl.textContent =
         `${harga.toLocaleString('id-ID')} × ${sisa} ÷ ${total} × ${fee} = ${Math.round(result).toLocaleString('id-ID')}`;
     }
+  </script>
+
+  <!-- FAQ -->
+  <script>
+    const FAQ_DATA = [
+      {
+        q: "Bagaimana cara order?",
+        a: "Klik tombol \"LIHAT\" pada produk yang kamu mau, lalu klik \"ORDER VIA WHATSAPP\". Pesan akan otomatis terkirim ke kami."
+      },
+      {
+        q: "Berapa lama proses aktivasi?",
+        a: "Aktivasi dilakukan secepat mungkin, biasanya 1–24 jam setelah pembayaran dikonfirmasi."
+      },
+      {
+        q: "Metode pembayaran apa saja yang tersedia?",
+        a: "Kami menerima transfer bank, GoPay, OVO, DANA, dan QRIS."
+      },
+      {
+        q: "Apakah ada garansi?",
+        a: "Garansi tersedia sesuai paket yang dipilih. Cek deskripsi masing-masing produk untuk detail garansi."
+      },
+      {
+        q: "Bagaimana cara klaim garansi?",
+        a: "Hubungi kami via WhatsApp dengan menyertakan bukti pembelian dan screenshot masalah yang dialami."
+      },
+      {
+        q: "Apakah akun bisa digunakan di semua device?",
+        a: "Tergantung produk. Cek deskripsi produk untuk info kompatibilitas device."
+      },
+      {
+        q: "Apakah bisa request produk yang tidak ada di list?",
+        a: "Bisa, silakan hubungi kami via WhatsApp dan kami akan coba bantu carikan."
+      },
+      {
+        q: "Apa itu sharing dan privat?",
+        a: "Sharing artinya akun dipakai bersama beberapa user. Privat artinya akun hanya untuk kamu sendiri."
+      },
+      {
+        q: "Bagaimana sistem refund?",
+        a: "Refund dihitung menggunakan rumus yang bisa kamu cek di kalkulator refund (tombol pojok kanan bawah)."
+      },
+    ];
+
+    function renderFAQ() {
+      const wrap = document.getElementById('faq-wrap');
+      if (!wrap) return;
+      wrap.innerHTML = FAQ_DATA.map((item, i) => `
+        <div class="faq-item" id="faq-${i}">
+          <button class="faq-q" onclick="toggleFAQ(${i})">
+            <span>${item.q}</span>
+            <span class="faq-icon" id="faq-icon-${i}">+</span>
+          </button>
+          <div class="faq-a" id="faq-a-${i}">
+            <div class="faq-a-inner">${item.a}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleFAQ(index) {
+      const answer = document.getElementById(`faq-a-${index}`);
+      const icon   = document.getElementById(`faq-icon-${index}`);
+      const item   = document.getElementById(`faq-${index}`);
+      const isOpen = answer.classList.contains('open');
+
+      document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+      document.querySelectorAll('.faq-icon').forEach(ic => ic.textContent = '+');
+      document.querySelectorAll('.faq-item').forEach(it => it.classList.remove('active'));
+
+      if (!isOpen) {
+        answer.classList.add('open');
+        icon.textContent = '−';
+        item.classList.add('active');
+      }
+    }
+
+    renderFAQ();
   </script>
 
 </body>

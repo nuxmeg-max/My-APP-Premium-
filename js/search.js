@@ -34,10 +34,16 @@ function filterProducts(query, countEl) {
   let totalVisible   = 0;
 
   if (query === '') {
-    // Reset ke state awal berdasarkan isExpanded
+    // Reset ke state awal
     allCards.forEach(card => {
       const idx = parseInt(card.getAttribute('data-index'));
-      card.style.display = (idx >= INITIAL_SHOW && !isExpanded) ? 'none' : '';
+      if (idx >= INITIAL_SHOW && !isExpanded) {
+        card.style.display = 'none';
+        card.setAttribute('data-hidden', 'true');
+      } else {
+        card.style.display = '';
+        card.removeAttribute('data-hidden');
+      }
     });
     allBlocks.forEach(block => {
       const start = parseInt(block.getAttribute('data-cat-start'));
@@ -45,14 +51,18 @@ function filterProducts(query, countEl) {
     });
     if (showmoreWrap) showmoreWrap.style.display = '';
     if (countEl) countEl.textContent = '';
+    setTimeout(fixOddCard, 50);
     return;
   }
 
-  // Search aktif — sembunyikan showmore
+  // Search aktif
   if (showmoreWrap) showmoreWrap.style.display = 'none';
 
   // Tampilkan semua dulu
-  allCards.forEach(card  => card.style.display  = '');
+  allCards.forEach(card => {
+    card.style.display = '';
+    card.removeAttribute('data-hidden');
+  });
   allBlocks.forEach(block => block.style.display = '');
 
   // Filter per block
@@ -71,15 +81,19 @@ function filterProducts(query, countEl) {
 
       if (text.includes(query)) {
         card.style.display = '';
+        card.removeAttribute('data-hidden');
         visibleInBlock++;
         totalVisible++;
       } else {
         card.style.display = 'none';
+        card.setAttribute('data-hidden', 'true');
       }
     });
 
     block.style.display = visibleInBlock === 0 ? 'none' : '';
   });
+
+  setTimeout(fixOddCard, 50);
 
   if (!countEl) return;
   countEl.textContent = totalVisible === 0

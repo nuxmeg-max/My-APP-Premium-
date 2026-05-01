@@ -66,13 +66,14 @@ function renderStore() {
   `;
 
   section.innerHTML = html;
+  setTimeout(fixOddCard, 50);
 }
 
 function renderCard(product, index) {
   const descHTML = product.desc
     .map(d => `<div class="desc-item">${d}</div>`)
     .join('');
-  const num = String(index + 1).padStart(2, '0');
+  const num    = String(index + 1).padStart(2, '0');
   const hidden = index >= INITIAL_SHOW ? 'style="display:none"' : '';
 
   return `
@@ -95,6 +96,7 @@ function renderCard(product, index) {
   `;
 }
 
+// ── Toggle Show More / Show Less ──────────────────────────────
 let isExpanded = false;
 
 function toggleShowMore() {
@@ -107,10 +109,10 @@ function toggleShowMore() {
   const comingSoon = document.getElementById('coming-soon-el');
 
   if (isExpanded) {
-    document.querySelectorAll('.card').forEach((card, i) => {
+    document.querySelectorAll('.card').forEach((card) => {
       const idx = parseInt(card.getAttribute('data-index'));
       if (idx >= INITIAL_SHOW) {
-        setTimeout(() => { card.style.display = ''; }, (i - INITIAL_SHOW) * 40);
+        setTimeout(() => { card.style.display = ''; }, (idx - INITIAL_SHOW) * 40);
       }
     });
     document.querySelectorAll('.category-block').forEach(block => {
@@ -122,6 +124,7 @@ function toggleShowMore() {
     count.textContent = '';
     btn.classList.add('expanded');
     if (comingSoon) comingSoon.style.display = 'block';
+    setTimeout(fixOddCard, 300);
 
   } else {
     document.querySelectorAll('.card').forEach(card => {
@@ -139,11 +142,13 @@ function toggleShowMore() {
     count.textContent = `+${totalCards - INITIAL_SHOW} produk lainnya`;
     btn.classList.remove('expanded');
     if (comingSoon) comingSoon.style.display = 'none';
+    setTimeout(fixOddCard, 50);
 
     document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
   }
 }
 
+// ── WhatsApp Order ────────────────────────────────────────────
 function orderWA(productName) {
   if (typeof STORE_DATA === 'undefined') return;
   const phone = STORE_DATA.whatsapp;
@@ -151,6 +156,26 @@ function orderWA(productName) {
   window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
 }
 
+// ── Fix kotak kosong card ganjil ──────────────────────────────
+function fixOddCard() {
+  document.querySelectorAll('.cards-grid').forEach(grid => {
+    grid.querySelectorAll('.card').forEach(card => {
+      card.style.gridColumn = '';
+      card.style.maxWidth   = '';
+    });
+
+    const visibleCards = [...grid.querySelectorAll('.card')]
+      .filter(card => card.style.display !== 'none');
+
+    if (visibleCards.length % 2 !== 0) {
+      const last = visibleCards[visibleCards.length - 1];
+      last.style.gridColumn = '1 / -1';
+      last.style.maxWidth   = '50%';
+    }
+  });
+}
+
+// ── Scroll Fade-Up Animation ──────────────────────────────────
 function initScrollAnimation() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -178,6 +203,7 @@ function initScrollAnimation() {
   });
 }
 
+// ── Helper ────────────────────────────────────────────────────
 function escapeAttr(str) {
   return str.replace(/'/g, "\\'");
 }

@@ -25,15 +25,28 @@ function renderStore() {
   });
 
   let html = `<div class="section-label">「 Katalog Produk 」</div>`;
-  html += `<div class="cards-grid" id="main-grid">`;
 
-  allProducts.forEach((p, i) => {
-    const hidden = i >= INITIAL_SHOW ? 'class="card fade-up hidden-product"' : 'class="card fade-up"';
-    html += renderCard(p, i, i >= INITIAL_SHOW);
+  // Render per kategori dengan header masing-masing
+  let cardIndex = 0;
+  categories.forEach((cat) => {
+    html += `
+      <div class="category-block">
+        <div class="category-header fade-up">
+          <div class="category-name">${cat.category}</div>
+          <div class="category-badge">${cat.badge}</div>
+        </div>
+        <div class="cards-grid">
+          ${cat.products.map((p) => {
+            const hidden = cardIndex >= INITIAL_SHOW;
+            const card = renderCard(p, cardIndex, hidden);
+            cardIndex++;
+            return card;
+          }).join('')}
+        </div>
+      </div>
+    `;
   });
-
-  html += `</div>`;
-
+  
   // Show more / show less button
   if (allProducts.length > INITIAL_SHOW) {
     html += `
@@ -71,7 +84,7 @@ function renderCard(product, index, hidden) {
         <div class="badge-pill">${product.badge}</div>
       </div>
       <div class="card-name">${product.name}</div>
-      <div class="card-tag">${product.category}</div>
+      <div class="card-tag">${product.tag}</div>
       <div class="card-desc">${descHTML}</div>
       <div class="card-bottom">
         <div class="card-price">

@@ -58,12 +58,19 @@ function filterProducts(query, countEl) {
     return;
   }
 
-  // ── Search aktif: tampilkan semua dulu, lalu filter ──
+  // ── Search aktif ──
+  // Sembunyikan showmore button
   if (showmoreWrap) showmoreWrap.style.display = 'none';
 
-  // Tampilkan semua card sementara untuk difilter
-  allCards.forEach(card => card.classList.remove('hidden-product'));
-  allBlocks.forEach(block => block.classList.remove('hidden-product'));
+  // Tampilkan semua block dan card dulu sebelum filter
+  allBlocks.forEach(block => {
+    block.classList.remove('hidden-product');
+    block.style.display = '';
+  });
+  allCards.forEach(card => {
+    card.classList.remove('hidden-product');
+    card.style.display = '';
+  });
 
   // Filter per category block
   allBlocks.forEach((block) => {
@@ -72,20 +79,28 @@ function filterProducts(query, countEl) {
 
     cards.forEach((card) => {
       const cardText = [
-        card.querySelector('.card-name')?.textContent  || '',
-        card.querySelector('.card-tag')?.textContent   || '',
-        card.querySelector('.badge-pill')?.textContent || '',
-        card.querySelector('.card-desc')?.textContent  || '',
-        block.querySelector('.category-name')?.textContent || '',
+        card.querySelector('.card-name')?.textContent        || '',
+        card.querySelector('.card-tag')?.textContent         || '',
+        card.querySelector('.badge-pill')?.textContent       || '',
+        card.querySelector('.card-desc')?.textContent        || '',
+        block.querySelector('.category-name')?.textContent   || '',
       ].join(' ').toLowerCase();
 
       const match = cardText.includes(query);
-      card.classList.toggle('hidden-product', !match);
-      if (match) { visibleInBlock++; totalVisible++; }
+      if (!match) {
+        card.classList.add('hidden-product');
+        card.style.display = 'none';
+      } else {
+        visibleInBlock++;
+        totalVisible++;
+      }
     });
 
-    // Sembunyikan category block kalau semua produknya ga cocok
-    block.classList.toggle('hidden-product', visibleInBlock === 0);
+    // Sembunyikan seluruh block kalau tidak ada yang cocok
+    if (visibleInBlock === 0) {
+      block.classList.add('hidden-product');
+      block.style.display = 'none';
+    }
   });
 
   if (!countEl) return;

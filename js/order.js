@@ -6,6 +6,7 @@ const INITIAL_SHOW = 4;
 
 document.addEventListener('DOMContentLoaded', () => {
   renderStore();
+  initBottomSheet();
   initScrollAnimation();
 });
 
@@ -22,7 +23,7 @@ function renderStore() {
     const firstIndexInCat = cardIndex;
 
     const catCards = cat.products.map((p) => {
-      const card = renderCard(p, cardIndex);
+      const card = renderCard(p, cardIndex, cat.category);
       cardIndex++;
       return card;
     }).join('');
@@ -66,18 +67,29 @@ function renderStore() {
   `;
 
   section.innerHTML = html;
-  setTimeout(fixOddCard, 50);
+  setTimeout(fixOddCard, 100);
 }
 
-function renderCard(product, index) {
+function renderCard(product, index, catName) {
   const descHTML = product.desc
     .map(d => `<div class="desc-item">${d}</div>`)
     .join('');
   const num    = String(index + 1).padStart(2, '0');
   const hidden = index >= INITIAL_SHOW ? 'style="display:none"' : '';
 
+  // Encode product data untuk bottom sheet
+  const productData = encodeURIComponent(JSON.stringify({
+    name:    product.name,
+    tag:     product.tag,
+    badge:   product.badge,
+    price:   product.price,
+    desc:    product.desc,
+    waName:  product.waName,
+    catName: catName,
+  }));
+
   return `
-    <div class="card fade-up" data-index="${index}" ${hidden} onclick="orderWA('${escapeAttr(product.waName)}')">
+    <div class="card fade-up" data-index="${index}" ${hidden} onclick="openSheet('${productData}')">
       <div class="card-top">
         <div class="card-icon">// ${num}</div>
         <div class="badge-pill">${product.badge}</div>
@@ -90,10 +102,69 @@ function renderCard(product, index) {
           <small>IDR</small>
           ${product.price}
         </div>
-        <button class="card-btn">ORDER →</button>
+        <button class="card-btn">LIHAT →</button>
       </div>
     </div>
   `;
+}
+
+// ── Bottom Sheet ──────────────────────────────────────────────
+function initBottomSheet() {
+  // Inject HTML bottom sheet ke body
+  const sheet = document.createElement('div');
+  sheet.innerHTML = `
+    <div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()"></div>
+    <div class="sheet" id="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <button class="sheet-back" onclick="closeSheet()">← BACK</button>
+        <div class="sheet-header-badge" id="sheet-badge"></div>
+      </div>
+      <div class="sheet-body">
+        <div class="sheet-cat"     id="sheet-cat"></div>
+        <div class="sheet-name"    id="sheet-name"></div>
+        <div class="sheet-tag"     id="sheet-tag"></div>
+        <div class="sheet-divider"></div>
+        <div class="sheet-desc"    id="sheet-desc"></div>
+        <div class="sheet-divider"></div>
+        <div class="sheet-price-wrap">
+          <div class="sheet-price">
+            <small>IDR</small>
+            <span id="sheet-price"></span>
+          </div>
+        </div>
+        <button class="sheet-order-btn" id="sheet-order-btn">
+          ORDER VIA WHATSAPP →
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(sheet);
+}
+
+function openSheet(encodedData) {
+  const p = JSON.parse(decodeURIComponent(encodedData));
+
+  document.getElementById('sheet-badge').textContent = p.badge;
+  document.getElementById('sheet-cat').textContent   = p.catName;
+  document.getElementById('sheet-name').textContent  = p.name;
+  document.getElementById('sheet-tag').textContent   = p.tag;
+  document.getElementById('sheet-price').textContent = p.price;
+
+  const descEl = document.getElementById('sheet-desc');
+  descEl.innerHTML = p.desc.map(d => `<div class="sheet-desc-item">${d}</div>`).join('');
+
+  document.getElementById('sheet-order-btn').onclick = () => orderWA(p.waName);
+
+  document.getElementById('sheet-overlay').classList.add('active');
+  document.getElementById('sheet').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSheet() {
+  document.getElementById('sheet-overlay').classList.remove('active');
+  document.getElementById('sheet').classList.remove('active');
+  document.body.style.overflow = '';
 }
 
 // ── Toggle Show More / Show Less ──────────────────────────────
@@ -112,7 +183,7 @@ function toggleShowMore() {
     document.querySelectorAll('.card').forEach((card) => {
       const idx = parseInt(card.getAttribute('data-index'));
       if (idx >= INITIAL_SHOW) {
-        setTimeout(() => { card.style.display = ''; }, (idx - INITIAL_SHOW) * 40);
+        setTimeout(() => { card.style.display = ''; fixOddCard(); }, (idx - INITIAL_SHOW) * 40);
       }
     });
     document.querySelectorAll('.category-block').forEach(block => {
@@ -124,7 +195,7 @@ function toggleShowMore() {
     count.textContent = '';
     btn.classList.add('expanded');
     if (comingSoon) comingSoon.style.display = 'block';
-    setTimeout(fixOddCard, 300);
+    setTimeout(fixOddCard, 400);
 
   } else {
     document.querySelectorAll('.card').forEach(card => {
@@ -142,7 +213,7 @@ function toggleShowMore() {
     count.textContent = `+${totalCards - INITIAL_SHOW} produk lainnya`;
     btn.classList.remove('expanded');
     if (comingSoon) comingSoon.style.display = 'none';
-    setTimeout(fixOddCard, 50);
+    setTimeout(fixOddCard, 100);
 
     document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
   }
@@ -159,15 +230,21 @@ function orderWA(productName) {
 // ── Fix kotak kosong card ganjil ──────────────────────────────
 function fixOddCard() {
   document.querySelectorAll('.cards-grid').forEach(grid => {
-    grid.querySelectorAll('.card').forEach(card => {
+    const allCards = [...grid.querySelectorAll('.card')];
+
+    // Reset semua dulu
+    allCards.forEach(card => {
       card.style.gridColumn = '';
       card.style.maxWidth   = '';
     });
 
-    const visibleCards = [...grid.querySelectorAll('.card')]
-      .filter(card => card.style.display !== 'none');
+    // Filter yang benar-benar visible
+    const visibleCards = allCards.filter(card => {
+      const s = window.getComputedStyle(card);
+      return s.display !== 'none';
+    });
 
-    if (visibleCards.length % 2 !== 0) {
+    if (visibleCards.length > 0 && visibleCards.length % 2 !== 0) {
       const last = visibleCards[visibleCards.length - 1];
       last.style.gridColumn = '1 / -1';
       last.style.maxWidth   = '50%';

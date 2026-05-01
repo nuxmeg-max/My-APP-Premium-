@@ -314,25 +314,56 @@ footer {
   .footer-bottom { flex-direction: column; gap: 12px; align-items: flex-start; }
 }
 
-/* SHOW MORE BUTTON */
-.show-more-wrap {
-  text-align: center;
-  margin: 50px 0 10px;
+/* ── Hidden Product (show more) ── */
+.hidden-product {
+  display: none !important;
 }
 
-.show-more-btn {
-  padding: 14px 34px;
-  border-radius: 12px;
-  border: none;
-  background: #ffffff;
-  color: #000;
-  font-weight: 700;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: 0.3s;
+/* ── Show More Button ── */
+.showmore-wrap {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  padding: 0 0 80px;
 }
 
-.show-more-btn:hover {
-  transform: translateY(-3px);
-  opacity: 0.85;
+.showmore-btn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--white);
+  border: 1px solid var(--grey-2);
+  padding: 16px 32px;
+  cursor: none;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  position: relative;
+}
+.showmore-btn:hover {
+  background: var(--grey-1);
+  border-color: var(--grey-4);
+}
+.showmore-btn.expanded {
+  border-color: var(--grey-4);
+}
+
+#showmore-icon {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+.showmore-btn.expanded #showmore-icon {
+  transform: rotate(180deg);
+}
+
+.showmore-count {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--grey-3);
+  letter-spacing: 2px;
+  border-left: 1px solid var(--grey-2);
+  padding-left: 16px;
 }

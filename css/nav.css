@@ -79,6 +79,13 @@ nav {
   border-radius: 2px;
 }
 
+/* ── Nav Right (status + visitors) ── */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .nav-status {
   display: flex;
   align-items: center;
@@ -101,12 +108,36 @@ nav {
   50%       { opacity: 0.3; }
 }
 
+/* ── Visitor Counter ── */
+.nav-visitors {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--grey-3);
+  border: 1px solid var(--grey-2);
+  padding: 6px 14px;
+  border-radius: 2px;
+}
+.visitor-icon {
+  font-size: 11px;
+  line-height: 1;
+}
+#visitor-count {
+  letter-spacing: 2px;
+  color: var(--white);
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
   nav {
     padding: 16px 20px;
   }
   .nav-tag {
+    display: none;
+  }
+  .nav-visitors {
     display: none;
   }
 }

@@ -137,7 +137,12 @@ nav {
   .nav-tag {
     display: none;
   }
-  .nav-visitors {
+  .nav-status {
     display: none;
+  }
+  .nav-visitors {
+    display: flex;
+    padding: 4px 10px;
+    font-size: 9px;
   }
 }

@@ -138,11 +138,15 @@ nav {
     display: none;
   }
   .nav-status {
-    display: none;
+    font-size: 9px;
+    gap: 6px;
   }
   .nav-visitors {
     display: flex;
-    padding: 4px 10px;
+    padding: 4px 8px;
     font-size: 9px;
+  }
+  .nav-right {
+    gap: 8px;
   }
 }

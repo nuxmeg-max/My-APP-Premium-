@@ -25,9 +25,15 @@
   <nav>
     <a href="#" class="nav-logo">MEG<span>DIGITAL</span></a>
     <div class="nav-tag">PREMIUM APPS</div>
-    <div class="nav-status">
-      <div class="status-dot"></div>
-      OPEN FOR ORDER
+    <div class="nav-right">
+      <div class="nav-status">
+        <div class="status-dot"></div>
+        OPEN FOR ORDER
+      </div>
+      <div class="nav-visitors">
+        <span class="visitor-icon">👁</span>
+        <span id="visitor-count">—</span>
+      </div>
     </div>
   </nav>
 
@@ -36,17 +42,17 @@
     <div class="hero-video-wrap">
       <video
         class="hero-video"
-        src="assets/videos/Banner.mp4"
+        src="assets/videos/banner.mp4"
         autoplay
         loop
         muted
         playsinline
       ></video>
       <div class="hero-video-overlay"></div>
-      <div class="hero-video-label">KYY STORE ✦</div>
+      <div class="hero-video-label">MEG DIGITAL ✦ 2025</div>
     </div>
     <div class="hero-content">
-      <div class="hero-eyebrow">Est. MEG — Digital Store</div>
+      <div class="hero-eyebrow">Est. 2025 — Digital Store</div>
       <h1 class="hero-title">
         PREMIUM<br>
         <em>APPS</em><br>
@@ -60,17 +66,17 @@
   <!-- MARQUEE -->
   <div class="marquee-wrap">
     <div class="marquee-track">
-      <span class="accent">MEG DIGITAL</span><span>—</span>
+      <span class="accent">CHATGPT+</span><span>—</span>
       <span>PREMIUM ACCESS</span><span>—</span>
       <span class="accent">HARGA TERJANGKAU</span><span>—</span>
       <span>GARANSI</span><span>—</span>
-      <span class="accent">TRUSTED RESELLER</span><span>—</span>
+      <span class="accent">TRUSTED SELLER</span><span>—</span>
       <span>ORDER VIA WA</span><span>—</span>
-      <span class="accent">MEG DIGITAL</span><span>—</span>
+      <span class="accent">CHATGPT+</span><span>—</span>
       <span>PREMIUM ACCESS</span><span>—</span>
       <span class="accent">HARGA TERJANGKAU</span><span>—</span>
       <span>GARANSI</span><span>—</span>
-      <span class="accent">TRUSTED RESELLER</span><span>—</span>
+      <span class="accent">TRUSTED SELLER</span><span>—</span>
       <span>ORDER VIA WA</span><span>—</span>
     </div>
   </div>
@@ -200,7 +206,7 @@
       document.getElementById('hero-sub').textContent = STORE_DATA.tagline;
 
       const sn = STORE_DATA.storeName;
-      const splitAt = sn.indexOf('STORE');
+      const splitAt = sn.indexOf('DIGITAL');
       const part1 = splitAt > -1 ? sn.slice(0, splitAt) : sn;
       const part2 = splitAt > -1 ? sn.slice(splitAt) : '';
       document.getElementById('footer-logo').innerHTML =
@@ -262,7 +268,7 @@
       },
       {
         q: "Metode pembayaran apa saja yang tersedia?",
-        a: "Kami menerima transfer GoPay, OVO, DANA, dan QRIS."
+        a: "Kami menerima transfer bank, GoPay, OVO, DANA, dan QRIS."
       },
       {
         q: "Apakah ada garansi?",
@@ -324,6 +330,30 @@
     }
 
     renderFAQ();
+  </script>
+
+  <!-- Visitor Counter Firebase -->
+  <script type="module">
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, runTransaction, onValue }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const app = initializeApp({
+      databaseURL: "https://apps-prem-default-rtdb.asia-southeast1.firebasedatabase.app"
+    });
+
+    const db         = getDatabase(app);
+    const visitorRef = ref(db, 'visitors/total');
+
+    // Tambah 1 setiap pengunjung baru
+    runTransaction(visitorRef, (current) => (current || 0) + 1);
+
+    // Update angka real-time
+    onValue(visitorRef, (snapshot) => {
+      const el = document.getElementById('visitor-count');
+      if (el) el.textContent = (snapshot.val() || 0).toLocaleString('id-ID');
+    });
   </script>
 
 </body>
